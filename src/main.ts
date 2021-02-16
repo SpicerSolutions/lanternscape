@@ -13,12 +13,12 @@ Vue.config.productionTip = false;
 
 const echo = new Echo({
   broadcaster: "pusher",
-  key: "<app key>",
+  key: "810e1cfa36bfe18ccbac",
   cluster: "eu",
   disableStats: true,
   forceTLS: true,
   encrypted: true,
-  wsHost: "<endoint url>",
+  wsHost: "www.lanternscape.com",
   wsPort: 6001,
   wssPort: 6001
 });
@@ -73,7 +73,7 @@ export class AuthHandler {
     this.fetchUserInfo.addEventListener('click', () => {
       this.authFlow.performWithFreshTokens().then(accessToken => {
         let request =
-          new Request('<user details and stuff>', {
+          new Request('https://www.lanternscape.com/api/list-channels', {
             headers: new Headers({ 'Authorization': `Bearer ${accessToken}` }),
             method: 'GET',
             cache: 'no-cache'
@@ -83,7 +83,10 @@ export class AuthHandler {
           .then(result => result.json())
           .then(user => {
             log('User Info ', user);
-            console.log(user);
+
+            // upload channel selection drop down with data returned
+
+            // move channel joining to match the selected channel
 
             echo.channel('channel-1-curse-of-strahd').listen('update', this.sendUpdate);
 
@@ -136,7 +139,7 @@ export class AuthHandler {
     this.snackbarContainer.MaterialSnackbar.showSnackbar(data);
   }
 
-  private sendUpdate(data: string) {
+  private sendUpdate(data: any) {
     console.log(data);
   }
 

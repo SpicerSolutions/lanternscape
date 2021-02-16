@@ -1,18 +1,18 @@
 <template>
-  <div class="home">
-    
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div class="home">    
+    <button id="login_login">Login</button>
+    <button id="handle-user-info">Fetch Data</button>
+    <div id="user-info"></div>
+    <div id="user-name"></div>
+    <div id="user-profile-image"></div>
+    <div id="appauth-snackbar"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
 export default Vue.extend({
-  name: "Home",
-  components: {
-    HelloWorld
-  }
+  name: "Home"
 });
 </script>
