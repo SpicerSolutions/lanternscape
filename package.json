@@ -1,6 +1,8 @@
 {
-  "name": "lanternappts",
-  "version": "0.1.0",
+  "name": "lanternscape",
+  "version": "1.0.0",
+  "description": "Desktop application of the webapp LanternScape. Provides an interface between the remove websocket server and the physical devices.",
+  "author": "Johnny Spicer <johnny@spicersolutions.com>",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

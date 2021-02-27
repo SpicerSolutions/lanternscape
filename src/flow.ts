@@ -179,7 +179,7 @@ export class AuthFlow {
     this.accessTokenResponse = undefined;
   }
 
-  performWithFreshTokens(): Promise<string> {
+  performWithFreshTokens(): Promise<string> {  
     if (!this.configuration) {
       log("Unknown service configuration");
       return Promise.reject("Unknown service configuration");
@@ -208,4 +208,24 @@ export class AuthFlow {
         return response.accessToken;
       });
   }
+
+  getTokenJson() {
+    if ( typeof this.accessTokenResponse !== 'undefined' ) {
+      return this.accessTokenResponse.toJson();
+    }
+
+    return false;
+  }
+
+  setAccessTokenResponse(response: any) {
+    this.accessTokenResponse = new TokenResponse(response);
+  }
+
+  isTokenValid() {
+    if ( typeof this.accessTokenResponse !== 'undefined' ) {
+      return this.accessTokenResponse.isValid();
+    }
+    return false;
+  }
+
 }
