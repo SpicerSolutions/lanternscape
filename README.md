@@ -1,6 +1,5 @@
 # lanternscape-app
 
-```
 LanternScape app is the desktop client of the website https://www.lanternscape.com.
 
 LanternScape was created to increase the immersion when playing VTTRPGs (Virtual Table Top Role Play Games). Allowing the GM/DM to change the mood lighting (or special effects) for the players making for a better shared experience.
