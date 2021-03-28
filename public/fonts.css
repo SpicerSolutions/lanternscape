@@ -41,6 +41,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
+  .icon-spinner9:before {
+    content: "\e982";
+  }
+  .icon-refresh:before {
+    content: "\e984";
+  }
   .icon-cog:before {
     content: "\e994";
   }

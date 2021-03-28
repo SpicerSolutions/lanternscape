@@ -1,6 +1,6 @@
 {
   "name": "lanternscape",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Desktop application of the webapp LanternScape. Provides an interface between the remove websocket server and the physical devices.",
   "author": "Johnny Spicer <johnny@spicersolutions.com>",
   "private": true,

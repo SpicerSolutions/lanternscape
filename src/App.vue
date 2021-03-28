@@ -8,7 +8,7 @@
 body {
   background-color: #111111;
   position: relative;
-  height: 660px;
+  height: 621px;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -113,6 +113,10 @@ h1 {
   border-left: 1px solid lighten(#111111,10%);
   border-bottom: 1px solid darken(#111111,10%);
   border-right: 1px solid darken(#111111,10%);  
+}
+
+.text-right{
+  text-align: right;
 }
 
 .p {

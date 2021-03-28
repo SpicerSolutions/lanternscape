@@ -2,17 +2,29 @@
   <div class="root">
     <div class="container">
       <div id="header">
-        <h1>LanternScape</h1>
+        <div class="row text-right">
+          <div class="twelve columns">
+            <small id="version-no">Version</small>
+          </div>
+        </div>
+        <h1>LanternScape</h1>              
       </div>
       <div id="home-page">
         <button id="login_login" class="button-primary">Login</button>
       </div>
       <div id="channel-page" class="hidden">
         <div class="row">
-          <div class="twelve columns">
+          <div class="ten columns">
             <select name="channel" id="channels" class="u-full-width">
               <option value="" selected disabled>Choose</option>
             </select>
+          </div>
+          <div class="two columns">
+            <button id="refresh-channel" class="button-primary"><span class="icon-refresh"></span></button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="twelve columns">
             <button id="join-channel" class="button-primary"><span class="icon-enter"></span> Join Channel</button>
           </div>
         </div>
@@ -24,10 +36,13 @@
           </div>
         </div>
         <div class="row">
-          <div class="six columns">
+          <div class="three columns">
+            <button id="power" class="button-primary"><span class="icon-switch"></span></button>
+          </div>
+          <div class="one column">
             <label for="brightness"><span class="icon-sun"></span></label>
           </div>
-          <div class="six columns">
+          <div class="eight columns">
             <div class="switch">
               <input type="range" max="255" min="0" name="brightness" id="brightness">
             </div>

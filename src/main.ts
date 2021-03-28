@@ -5,7 +5,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import axios from "axios";
-import { ipcRenderer } from "electron";
+import { ipcRenderer, remote } from "electron";
 import { AuthFlow, AuthStateEmitter } from "./flow";
 import { log } from "./logger";
 
@@ -35,6 +35,9 @@ const CHANNEL_STATE = 'channel';
 const DEVICE_STATE = 'device';
 const JOINED_STATE = 'joined';
 
+const VERSION = remote.app.getVersion();
+const versionNo = document.getElementById('version-no') as HTMLElement;
+
 let localConfig:any;
 
 new Vue({
@@ -42,6 +45,42 @@ new Vue({
     store,
     render: h => h(App)
   }).$mount("#app");
+
+function createVersion(version: string) {
+  const versions = version.split('.');
+  let major = 0;
+  let minor = 0;
+  let bug = 0;
+  let computedVersion = 0;
+  if ( versions.length!==3 ) {
+    return 0;
+  }
+  major = parseInt(versions[0])*100;
+  minor = parseInt(versions[1])*10;
+  bug = parseInt(versions[2]);
+
+  computedVersion = major+minor+bug;
+
+  return computedVersion;
+}
+
+function renderVersion() {
+  const url = "https://www.lanternscape.com/version.json";
+
+  const versionElement = document.getElementById('version-no') as HTMLElement;
+
+  axios({
+      method: "GET",
+      url: url,
+      responseType: "json"
+    }).then( response => {
+      if ( createVersion(response.data.version)>createVersion(VERSION) ) {
+        versionElement.innerHTML = "<a href=\"https://www.lanternscape.com\" target=\"_blank\">New version available</a>";
+      } else {
+        versionElement.innerHTML = "Version " + VERSION;
+      }
+    });
+}
 
 function canUseEffect(effect: number): boolean {
 
@@ -117,7 +156,8 @@ export class AuthHandler {
   private appView = LOGIN_PAGE;
   private pollInterval = 10000;
   private pollTimer: any;
-
+  private powerState: any = "off";
+  
   private homePage = document.getElementById('home-page') as HTMLElement;
   private channelPage = document.getElementById('channel-page') as HTMLElement;
   private devicePage = document.getElementById('device-page') as HTMLElement;
@@ -127,6 +167,8 @@ export class AuthHandler {
   private channelSelection = document.querySelector("#channels") as HTMLSelectElement;    
   private deviceList = document.querySelector('#devices') as HTMLSelectElement;
   private newDevice = document.querySelector('#device_address') as HTMLInputElement;
+  private handlePower = document.querySelector("#power") as HTMLElement;
+  private handleChannelRefresh = document.querySelector("#refresh-channel") as HTMLElement;
   private handleChannelJoin = document.querySelector("#join-channel") as HTMLElement;
   private handleChannelLeave = document.querySelector("#leave-channel") as HTMLElement;
   private handleBrightness = document.querySelector("#brightness") as HTMLInputElement;
@@ -144,6 +186,10 @@ export class AuthHandler {
     // do .... something ... maybe
     this.initializeUi(); 
 
+    window.addEventListener('unload',()=>{
+      this.lamp("off");
+    });
+
     localConfig = this.getLocalConfig();
 
     this.configureUi();
@@ -154,6 +200,25 @@ export class AuthHandler {
         event.preventDefault();
     });
       
+    this.handleChannelRefresh.addEventListener('click',() => {
+      if ( !this.authFlow.isTokenValid() ) {
+          log("Token invalid");
+          this.authFlow.performWithFreshTokens().then(accessToken => this.fetchChannels(accessToken) );
+      } else {
+          log("Token valid");
+          this.fetchChannels(this.authConfig.access_token);
+      }      
+    });
+
+    this.handlePower.addEventListener('click',() => {
+      switch(this.powerState) {
+        case "on": this.lamp("off");
+                  break;
+        case "off": this.lamp("on");
+                break;                  
+      }
+    });
+
     this.handleChannelJoin.addEventListener('click',() => {
       const selectedChannel = this.channelSelection.value;
 
@@ -161,6 +226,7 @@ export class AuthHandler {
         echo.channel(this.channelSelection.value).listen("update", sendUpdate);
         this.appView = JOINED_PAGE;
         this.updateUi();
+        this.lamp("on");
       }            
     });
 
@@ -344,6 +410,10 @@ export class AuthHandler {
       .then(user => {
         log("User Info ", user);
 
+        // empty select
+
+        this.removeOptions(this.channelSelection);
+
         if ( typeof user.channels!=='undefined' ){
           for( const channel in user.channels ) {
             const newOption = document.createElement('option');
@@ -395,6 +465,7 @@ export class AuthHandler {
 
   private initializeUi() {
     /* */
+    renderVersion();
   }    
 
   private configureUi() {
@@ -500,6 +571,42 @@ export class AuthHandler {
 
     sendUpdate(final);   
   }
+
+  private lamp(state: any) {
+
+    this.powerState = state;
+    const final = {data:''};
+    const data = {
+      type: 'get',
+      url: '/json/si',
+      data: ''
+    };
+    const control = {
+      transition: 7,
+      on: false,
+      v: true
+    };
+
+    switch(state) {
+      case 'on': control.on = true;
+          break;
+      case 'off': control.on = false;
+          break;
+    }
+
+    data.data = JSON.stringify(control);
+    final.data = JSON.stringify(data);
+
+    sendUpdate(final);   
+  }
+
+  private removeOptions(selectElement: HTMLSelectElement) {
+    let i;
+    const L = selectElement.options.length - 1;
+    for(i = L; i >= 0; i--) {
+       selectElement.remove(i);
+    }
+ }
 
   signOut() {
     this.authFlow.signOut();
